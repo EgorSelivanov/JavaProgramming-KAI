@@ -45,6 +45,12 @@ public class TCPClient implements Runnable {
 
                 if (message.contains("="))
                     break;
+
+                try {
+                    Thread.sleep(TIME_SEND_SLEEP);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             InputStream in = socket.getInputStream();
