@@ -16,54 +16,35 @@ import java.util.Scanner;
 
 public class TCPClient implements Runnable {
     private static final int TIME_SEND_SLEEP = 100;
-    //public static final int CLIENT_COUNT = 3;
-    private String message = null;
     private String fileName = null;
 
-    public TCPClient(String message, String fileName){
-        this.message = message;
+    public TCPClient(String fileName){
         this.fileName = fileName;
     }
     public void run(){
         String response = "";
+        String expression = "";
         try{
             Socket socket = new Socket(
                     Properties.getProperty(Properties.CLIENT_HOST),
                     Integer.parseInt(Properties.getProperty(Properties.CLIENT_PORT)));
 
+            System.out.println("Введите выражение (окончание выражения - пробел): ");
+
             OutputStream out = socket.getOutputStream();
             OutputStreamWriter streamWriter = new OutputStreamWriter(out);
             PrintWriter pWriter = new PrintWriter(streamWriter);
 
-            String messageCopy = message;
-            messageCopy = messageCopy.replace(" ", "");
-            if (!messageCopy.contains("=")){
-                System.out.println("Ошибка в выражении!");
-                return;
-            }
-
-            int index = 0;
-            char current;
-
             while(true){
-                current = messageCopy.charAt(index);
-                if (Character.isDigit(current) || current == '.') {
-                    index++;
-                    continue;
-                }
-                else {
-                    String send = messageCopy.substring(0, index + 1);
-                    index = -1;
-                    messageCopy = messageCopy.replace(send, "");
-                    pWriter.println(send);
-                    pWriter.flush();
+                Scanner scanner = new Scanner(System.in);
+                String message = scanner.nextLine();
+                expression += message;
 
-                    if (current == '=')
-                        break;
+                pWriter.println(message);
+                pWriter.flush();
 
-                    Thread.sleep(TIME_SEND_SLEEP);
-                }
-                index++;
+                if (message.contains("="))
+                    break;
             }
 
             InputStream in = socket.getInputStream();
@@ -81,11 +62,11 @@ public class TCPClient implements Runnable {
             }
             pWriter.close();
             reader.close();
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Исключение: " + e.toString());
+        } catch (IOException e) {
+            System.err.println("исключение: " + e.toString());
         }
 
-        System.out.println("Клиент получил значение выражения: " + message +
+        System.out.println("Клиент получил значение выражения: " + expression +
                 ". Результат: " + response);
     }
 
@@ -100,11 +81,7 @@ public class TCPClient implements Runnable {
             return;
         }
 
-        System.out.println("Введите выражение: ");
-        Scanner scanner = new Scanner(System.in);
-        String message = scanner.nextLine();
-
-        TCPClient ja = new TCPClient(message, fileName);
+        TCPClient ja = new TCPClient(fileName);
         Thread th = new Thread(ja);
         th.start();
 

@@ -137,7 +137,7 @@ public class TCPServer {
 
 
                 }catch(IOException e){
-                    System.err.println("Исключение: " + e.toString());
+                    System.err.println("Exception: " + e.toString());
                 }
             }
         }
@@ -149,7 +149,7 @@ public class TCPServer {
                 Thread thread = new Thread(listener);
                 thread.start();
             }catch(IOException e){
-                System.err.println("Исключение: " + e.toString());
+                System.err.println("Exception: " + e.toString());
             }
         }
     }

@@ -3,7 +3,7 @@ package com.company.properties;
 import java.io.InputStream;
 
 /**
- * Используется для получения настроек приложения из DB.properties
+ * используется для получения настроек приложения из DB.properties
  */
 public class Properties {
     public static final String CLIENT_HOST = "client.host";
